@@ -82,37 +82,54 @@ public:
 
 };
 
-class AF_ELWISE_Fixture_f32 : public AF_ELWISE_Fixture
+template<typename T>
+class ELWISE_Fixture : public AF_ELWISE_Fixture
 {
 public:
-    AF_ELWISE_Fixture_f32() : AF_ELWISE_Fixture(af_dtype::f32) {}
+    ELWISE_Fixture() : AF_ELWISE_Fixture(af_dtype(dtype_traits<T>::af_type)) {}
 };
 
-class AF_ELWISE_Fixture_f64 : public AF_ELWISE_Fixture
-{
-public:
-    AF_ELWISE_Fixture_f64() : AF_ELWISE_Fixture(af_dtype::f64) {}
-};
+typedef ELWISE_Fixture<uint8_t> AF_ELWISE_Fixture_u8;
+typedef ELWISE_Fixture<int16_t> AF_ELWISE_Fixture_s16;
+typedef ELWISE_Fixture<uint16_t> AF_ELWISE_Fixture_u16;
+typedef ELWISE_Fixture<int32_t> AF_ELWISE_Fixture_s32;
+typedef ELWISE_Fixture<uint32_t> AF_ELWISE_Fixture_u32;
+typedef ELWISE_Fixture<long long> AF_ELWISE_Fixture_s64;
+typedef ELWISE_Fixture<unsigned long long> AF_ELWISE_Fixture_u64;
+typedef ELWISE_Fixture<float> AF_ELWISE_Fixture_f32;
+typedef ELWISE_Fixture<double> AF_ELWISE_Fixture_f64;
+
 
 // do-nothing baseline measurement
+BASELINE_F( ELWISE_u8 , Baseline, AF_ELWISE_Fixture_u8 , samples,  iterations) {}
+BASELINE_F( ELWISE_s16, Baseline, AF_ELWISE_Fixture_s16, samples,  iterations) {}
+BASELINE_F( ELWISE_s32, Baseline, AF_ELWISE_Fixture_s32, samples,  iterations) {}
+BASELINE_F( ELWISE_s64, Baseline, AF_ELWISE_Fixture_s64, samples,  iterations) {}
 BASELINE_F( ELWISE_f32, Baseline, AF_ELWISE_Fixture_f32, samples,  iterations) {}
 BASELINE_F( ELWISE_f64, Baseline, AF_ELWISE_Fixture_f64, samples,  iterations) {}
 
-#define ELWISE_BENCHMARK(functionName, operation)                               \
-BENCHMARK_F( ELWISE_f32, ELWISE_f32_##functionName, AF_ELWISE_Fixture_f32,      \
-        samples, iterations)                                                    \
-{                                                                               \
-    af::array result = operation ;                                              \
-    result.eval();                                                              \
-}                                                                               \
-BENCHMARK_F( ELWISE_f64, ELWISE_f64_##functionName, AF_ELWISE_Fixture_f64,      \
-        samples, iterations)                                                    \
-{                                                                               \
-    af::array result = operation ;                                              \
-    result.eval();                                                              \
-}                                                                               \
+#define _ELWISE_BENCHMARK(functionName, operation, ctype, dataType)                                                  \
+BENCHMARK_F(Elwise_##dataType, Elwise_##dataType##_##functionName, AF_ELWISE_Fixture_##dataType, samples, iterations)\
+{                                                                                                                    \
+    auto &A = this->A;                                                                                               \
+    auto &B = this->B;                                                                                               \
+    af::array result = operation ;                                                                                   \
+    result.eval();                                                                                                   \
+}                                                                                                                    \
 
-//
+#define ELWISE_BENCHMARK_REALS(functionName, operation)     \
+    _ELWISE_BENCHMARK(functionName, operation, float, f32)  \
+    _ELWISE_BENCHMARK(functionName, operation, double, f64) \
+
+#define ELWISE_BENCHMARK(functionName, operation)           \
+    _ELWISE_BENCHMARK(functionName, operation, uint8, u8)   \
+    _ELWISE_BENCHMARK(functionName, operation, int16, s16)  \
+    _ELWISE_BENCHMARK(functionName, operation, int32, s32)  \
+    _ELWISE_BENCHMARK(functionName, operation, int64, s64)  \
+    _ELWISE_BENCHMARK(functionName, operation, float, f32)  \
+    _ELWISE_BENCHMARK(functionName, operation, double, f64) \
+
+
 // Benchmark ArrayFire functions individually:
 //
 

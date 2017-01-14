@@ -14,8 +14,7 @@ extern unsigned int samples;
 extern unsigned int iterations;
 
 
-BASELINE_F(LAPACK_LU_f32, Baseline, Fixture_2D_f32, samples, iterations) { }
-BASELINE_F(LAPACK_LU_f64, Baseline, Fixture_2D_f64, samples, iterations) { }
+BASELINE_F(LAPACK_LU, Baseline, AF_Fixture_2D, samples, iterations) { }
 
 BENCHMARK_F(LAPACK_LU_f32, LU_f32, Fixture_2D_f32, samples, iterations)
 {
