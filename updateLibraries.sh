@@ -114,7 +114,7 @@ mkdir -p ${ROOT_DIR}
 if [ ! -d ${AF_DIR} ] ; then
     if [ "x${build_source}x" == "xtruex" ]; then
         if [ -z "${release}" ]; then
-            build_arrayfire "master"
+            build_arrayfire "pts"
         else
             build_arrayfire ${release}
         fi
@@ -126,22 +126,3 @@ if [ ! -d ${AF_DIR} ] ; then
         fi
     fi
 fi
-
-# Ensure the benchmark suite exists on the local machine
-echo ""
-echo "Downloading/updating the benchmark suite."
-echo ""
-pushd ${ROOT_DIR}
-if [ ! -d ${ROOT_DIR}/arrayfire-benchmark ] ; then
-    git clone --recursive https://github.com/bkloppenborg/arrayfire-benchmark
-fi
-# update the benchmark suite
-cd ${ROOT_DIR}/arrayfire-benchmark
-# compile it
-cd build
-rm -rf ./*
-
-echo cmake -DArrayFire_DIR=${AF_DIR}/share/ArrayFire/cmake ..
-cmake -DArrayFire_DIR=${AF_DIR}/share/ArrayFire/cmake ..
-make -j8
-popd
