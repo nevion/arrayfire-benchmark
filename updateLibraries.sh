@@ -5,6 +5,7 @@
 
 ROOT_DIR=/tmp/benchmarking
 AF_DIR=${ROOT_DIR}/arrayfire-3
+OpenCL_INCLUDE_DIR=/usr/include
 
 build_arrayfire()
 {
@@ -26,7 +27,7 @@ build_arrayfire()
     # configure ArrayFire to build as quickly as possible
     cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=${AF_DIR} \
         -DBUILD_EXAMPLES=OFF -DBUILD_DOCS=OFF -DBUILD_TEST=OFF \
-        -DBUILD_GRAPHICS=OFF ..
+        -DBUILD_GRAPHICS=OFF -DOpenCL_INCLUDE_DIR=${OpenCL_INCLUDE_DIR} ..
     make -j12
     make install
     popd
@@ -105,6 +106,9 @@ for a in "$@"; do
     fi
     if echo $a | grep "^--af-dir=" > /dev/null 2> /dev/null; then
         AF_DIR=`echo $a | sed "s/^--af-dir=//"`
+    fi
+    if echo $a | grep "^--cl-include=" > /dev/null 2> /dev/null; then
+        OpenCL_INCLUDE_DIR=`echo $a | sed "s/^--cl-include=//"`
     fi
 done
 
