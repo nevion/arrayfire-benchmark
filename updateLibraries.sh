@@ -14,7 +14,7 @@ build_arrayfire()
     echo ""
     pushd ${ROOT_DIR}
     if [ ! -d ${AF_DIR} ] ; then
-        git clone --recursive https://github.com/arrayfire/arrayfire.git arrayfire_source
+        git clone -b pts --recursive https://github.com/nevion/arrayfire.git arrayfire_source
     fi
     cd ${ROOT_DIR}/arrayfire_source
     git co $1
@@ -24,11 +24,11 @@ build_arrayfire()
     mkdir -p ${ROOT_DIR}/arrayfire_source/build
     cd ${ROOT_DIR}/arrayfire_source/build
     # configure ArrayFire to build as quickly as possible
-    #cmake -DCMAKE_INSTALL_PREFIX=${AF_DIR} \
-    #    -DBUILD_EXAMPLES=OFF -DBUILD_DOCS=OFF -DBUILD_TEST=OFF \
-    #    -DBUILD_GRAPHICS=OFF ..
-    #make -j8
-    #make install
+    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=${AF_DIR} \
+        -DBUILD_EXAMPLES=OFF -DBUILD_DOCS=OFF -DBUILD_TEST=OFF \
+        -DBUILD_GRAPHICS=OFF ..
+    make -j12
+    make install
     popd
 }
 
