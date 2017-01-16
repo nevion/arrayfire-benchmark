@@ -5,7 +5,23 @@
 
 ROOT_DIR=/tmp/benchmarking
 AF_DIR=${ROOT_DIR}/arrayfire-3
-OpenCL_INCLUDE_DIR=/usr/include
+
+if [ -d /usr/local/cuda ]
+then
+    PATH="/usr/local/cuda/bin:$PATH"
+    LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/nvvm/lib64:$LD_LIBRARY_PATH
+    export CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda
+    if [ -n OpenCL_INCLUDE_DIR ]
+    then
+        export OpenCL_INCLUDE_DIR=/usr/local/cuda/include
+    fi
+else
+    if [ -n OpenCL_INCLUDE_DIR ]
+    then
+        export OpenCL_INCLUDE_DIR=/usr/include
+    fi
+fi
+
 
 build_arrayfire()
 {
