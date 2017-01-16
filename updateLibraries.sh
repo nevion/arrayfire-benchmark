@@ -17,7 +17,7 @@ build_arrayfire()
         git clone -b pts --recursive https://github.com/nevion/arrayfire.git arrayfire_source
     fi
     cd ${ROOT_DIR}/arrayfire_source
-    git co $1
+    git checkout $1
     git submodule init
     git submodule update
     # Compile ArrayFire and install it to a local directory
